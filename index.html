@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>NetCard Clement.lble</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <style>
+      html, body {
+        height: 100%;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        width: 100vw;
+        overflow-x: hidden;
+      }
+      .btn-gradient {
+        background: linear-gradient(90deg, #a68df5 0%, #b8b2f7 80%);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 8px 0 #a68df51a;
+        transition: box-shadow .13s, transform .13s;
+      }
+      .btn-gradient:hover, .btn-gradient:active {
+        box-shadow: 0 4px 20px 0 #a68df54a;
+        transform: translateY(-2px) scale(1.03);
+        filter: brightness(1.1);
+      }
+      .social-icon-bg {
+        background: #f5f6fa;
+        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .13s;
+        margin-right: 18px; /* Moins d'espace entre les icônes */
+        margin-left: 0;
+        flex-shrink: 0;
+      }
+      .social-icon-bg:last-child { margin-right: 0; }
+      .social-carousel {
+        overflow: hidden;
+        width: 292px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .social-carousel-track {
+        display: flex;
+        transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+        will-change: transform;
+      }
+      .slider-arrow[disabled] {
+        opacity: 0.25;
+        cursor: not-allowed;
+      }
+      .input-link {
+        background: linear-gradient(90deg, #edeaff 0%, #f8f8fe 100%);
+        border-radius: 14px;
+        font-size: 1.15rem;
+        font-weight: 500;
+      }
+      .input-link .fa-arrow-up-right-from-square {
+        color: #232323;
+      }
+      .section-shadow {
+        box-shadow: 0 2px 14px 0 #eae6fb1a;
+      }
+      .profile-img {
+        object-fit: cover;
+        object-position: center;
+      }
+      .footer {
+        width: 100vw;
+s        background: linear-gradient(90deg, #f8f8fe 0%, #edeaff 100%);
+        color: #a68df5;
+        font-weight: 500;
+        font-size: 1.1rem;
+        letter-spacing: 0.01em;
+        text-align: center;
+        padding: 15px 0 10px 0;
+        border-top: 1px solid #e1e1f7;
+        box-shadow: 0 -1px 6px #e9e6fb44;
+        margin-top: 30px;
+        /* For iOS safe area if needed */
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+        position: relative;
+      }
+      @media (max-width: 420px) {
+        .social-carousel { width: 232px; }
+        .footer { font-size: 0.95rem; }
+      }
+      button:active {
+        opacity: 0.85;
+      }
+      .main-content {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Bottom sheet overlay styles */
+      .overlay-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(40, 40, 60, 0.38);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        transition: opacity .2s;
+      }
+      .overlay-bottomsheet {
+        background: #fff;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        box-shadow: 0 -8px 40px #a68df533;
+        width: 100vw;
+        max-width: 480px;
+        min-height: 32vh;
+        padding: 2.3rem 1.5rem 2.5rem 1.5rem;
+        text-align: center;
+        position: relative;
+        animation: bottomSheetIn .27s cubic-bezier(.4,0,.2,1);
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      @keyframes bottomSheetIn {
+        from { transform: translateY(60px); opacity: 0; }
+        to   { transform: translateY(0); opacity: 1; }
+      }
+      /* Nouvelle animation pour la fermeture */
+      @keyframes bottomSheetOut {
+        from { transform: translateY(0); opacity: 1; }
+        to   { transform: translateY(60px); opacity: 0; }
+      }
+      .overlay-close {
+        position: absolute;
+        top: 1.0rem;
+        right: 1.0rem;
+        background: #edeaff;
+        color: #7c5bdb;
+        border: none;
+        border-radius: 999px;
+        width: 2.2rem;
+        height: 2.2rem;
+        cursor: pointer;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 1px #ece7ff;
+        transition: background 0.12s;
+      }
+      .overlay-close:active { background: #d6d1f9;}
+      .overlay-dragbar {
+        width: 48px;
+        height: 5px;
+        border-radius: 4px;
+        background: #e6e0f7;
+        margin: 0 auto 1.1rem auto;
+        opacity: 0.85;
+      }
+      .overlay-info-list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        align-items: center;
+        margin-bottom: 2.1rem;
+      }
+      .overlay-info-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.14rem;
+        width: 95%;
+        justify-content: flex-start;
+        background: #f8f8fe;
+        border-radius: 12px;
+        padding: 0.95rem 1.1rem;
+        box-shadow: 0 1px 6px #edeaff33;
+        font-weight: 500;
+      }
+      .overlay-info-row .icon {
+        color: #a68df5;
+        font-size: 1.21rem;
+        min-width: 1.4em;
+        text-align: center;
+      }
+      .overlay-info-row a, .overlay-info-row button {
+        color: #7c5bdb;
+        text-decoration: underline;
+        background: none;
+        border: none;
+        font: inherit;
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.13s;
+      }
+      .overlay-info-row a:active, .overlay-info-row button:active {
+        color: #a68df5;
+        text-decoration: underline;
+      }
+      .overlay-actions {
+        width: 100%;
+        display: flex;
+        gap: 1.1rem;
+        justify-content: center;
+      }
+      .overlay-action-btn {
+        flex: 1;
+        background: linear-gradient(90deg, #edeaff 0%, #f8f8fe 100%);
+        color: #7c5bdb;
+        font-weight: 600;
+        font-size: 1.08rem;
+        border-radius: 11px;
+        padding: 0.95rem 0.6rem;
+        border: none;
+        transition: background .14s, color .13s;
+        box-shadow: 0 1px 6px #edeaff33;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        justify-content: center;
+      }
+      .overlay-action-btn:active {
+        background: #e1d8fa;
+        color: #a68df5;
+      }
+      .quick-contact-form {
+        width: 100%;
+        max-width: 370px;
+        margin: 0 auto 2.1rem auto;
+        padding: 1.1rem 1.2rem 0.8rem 1.2rem;
+        background: #f8f8fe;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px #edeaff18;
+        display: flex;
+        flex-direction: column;
+        gap: 1.05rem;
+        font-size: 1.05rem;
+      }
+      .quick-contact-form label {
+        font-weight: 600;
+        color: #7c5bdb;
+        margin-bottom: 0.18rem;
+        font-size: 1.05em;
+        display: block;
+        text-align: left;
+      }
+      .quick-contact-form input,
+      .quick-contact-form textarea {
+        width: 100%;
+        border-radius: 9px;
+        border: 1.2px solid #e1e1f6;
+        padding: 0.6rem 0.95rem;
+        font-size: 1em;
+        transition: border-color .13s, box-shadow .13s;
+        background: #fff;
+        resize: none;
+      }
+      .quick-contact-form input:focus,
+      .quick-contact-form textarea:focus {
+        border-color: #a68df5;
+        outline: none;
+        box-shadow: 0 2px 10px #a68df511;
+      }
+      .quick-contact-form button[type="submit"] {
+        margin-top: 0.7rem;
+        background: linear-gradient(90deg, #a68df5 0%, #b8b2f7 80%);
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.08em;
+        border-radius: 9px;
+        padding: 0.9rem 0;
+        border: none;
+        box-shadow: 0 2px 8px 0 #a68df51a;
+        transition: background .15s, box-shadow .15s, transform .13s;
+      }
+      .quick-contact-form button[type="submit"]:hover {
+        background: #a68df5;
+        box-shadow: 0 4px 16px #a68df54a;
+        transform: scale(1.03);
+      }
+      .quick-contact-form .form-success {
+        color: #219c5a;
+        font-weight: 600;
+        text-align: center;
+        padding: 0.6rem 0 0.2rem 0;
+      }
+      .quick-contact-form .form-error {
+        color: #c63c3c;
+        font-weight: 600;
+        text-align: center;
+        padding: 0.6rem 0 0.2rem 0;
+      }
+      /* Animation pillule disponible */
+      .pill-available {
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 0 0 0 #a68df5;
+        animation: pill-glow 1.7s infinite alternate;
+      }
+      @keyframes pill-glow {
+        0% {
+          box-shadow: 0 0 0 0 #a68df540, 0 0 0 0 #a68df520;
+        }
+        60% {
+          box-shadow: 0 0 0 4px #a68df520, 0 0 0 8px #a68df510;
+        }
+        100% {
+          box-shadow: 0 0 0 7px #a68df520, 0 0 0 12px #a68df510;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-content">
+      <!-- ... contenu de la carte ... -->
+      <!-- (inchangé, tu as déjà tout le code ici) -->
+      <!-- Banner (no logo) -->
+      <div class="w-full h-44 relative" style="border-top-left-radius:0;border-top-right-radius:0;">
+        <img src="https://firebasestorage.googleapis.com/v0/b/justfit-bed28.firebasestorage.app/o/IMG_8459.jpg?alt=media&token=5d98b102-4887-410c-aac3-b68f22a7af0d" alt="Profalux Banner" class="w-full h-full object-cover"/>
+      </div>
+      <!-- Header infos -->
+      <div class="flex flex-row items-start justify-between px-6 mt-7">
+        <div class="flex-1 min-w-0">
+          <h1 class="text-[1.55rem] leading-tight font-bold text-black">Lenoble Clément</h1>
+          <p class="text-lg font-semibold text-[#7c5bdb] leading-tight">Créateur de Centric concept</p>
+          <div class="flex gap-2 mt-2">
+            <span class="inline-block bg-green-200 text-green-900 font-semibold rounded-full px-3 py-1 text-xs whitespace-nowrap pill-available">
+              Disponible pour des projets freelance
+            </span>
+          </div>
+          <div class="flex items-center gap-4 mt-3 text-base text-gray-700 font-medium">
+            <span class="flex items-center gap-1"><i class="fa-solid fa-location-dot"></i> Lyon</span>
+            <span class="flex items-center gap-1"><i class="fa-solid fa-globe"></i> FR</span>
+          </div>
+        </div>
+        <div class="ml-5 shrink-0">
+          <img src="https://firebasestorage.googleapis.com/v0/b/justfit-bed28.firebasestorage.app/o/IMG_8589%202.jpg?alt=media&token=aacc032d-c895-4ed7-b3a7-10c0a75282bd"
+               alt="Clément Lenoble"
+               class="w-20 h-20 profile-img rounded-2xl border-4 border-white shadow-xl"/>
+        </div>
+      </div>
+      <!-- Buttons / Actions -->
+      <div class="flex flex-row items-center gap-4 justify-center mt-7 mb-2">
+        <!-- Fiche contact -->
+        <button
+          id="fiche-contact-btn"
+          type="button"
+          class="btn-gradient flex items-center gap-2 px-4 py-2 rounded-xl shadow text-base whitespace-nowrap"
+          style="touch-action: manipulation;"
+        >
+          <i class="fa-regular fa-address-card"></i> Fiche contact
+        </button>
+        <!-- Echanger -->
+        <button
+          class="btn-gradient flex items-center gap-2 px-4 py-2 rounded-xl shadow text-base whitespace-nowrap"
+          style="touch-action: manipulation;"
+          onclick="window.open('https://wa.me/33600123456?text=Bonjour%20Cl%C3%A9ment%2C%20je%20souhaite%20%C3%A9changer%20avec%20vous%20depuis%20votre%20carte%20de%20visite%20num%C3%A9rique.','_blank')"
+        >
+          <i class="fa-solid fa-arrows-rotate"></i> Echanger
+        </button>
+        <!-- AirDrop -->
+        <button
+          id="airdrop-btn"
+          class="bg-[#edeaff] flex items-center justify-center w-11 h-11 rounded-xl text-[#a68df5] shadow"
+          style="touch-action: manipulation;"
+          title="Partager"
+        >
+          <i class="fa-solid fa-share-nodes"></i>
+        </button>
+      </div>
+      <!-- A propos -->
+      <div class="px-6 mt-6">
+        <h2 class="text-lg font-semibold mb-1">A propos</h2>
+        <div class="rounded-xl p-3 bg-[#f7f7fb] text-gray-700 text-base font-normal">
+          Développeur passionné avec 7+ ans d'expérience dans la création d'applications web performantes, responsives et sécurisées. Spécialiste React, Node.js, Tailwind CSS.
+        </div>
+      </div>
+      <!-- Socials Carousel -->
+      <div class="flex items-center justify-center gap-2 px-6 mt-7 mb-2">
+        <div class="social-carousel">
+          <div class="social-carousel-track" id="social-carousel-track">
+            <button class="social-icon-bg" aria-label="LinkedIn" onclick="window.open('https://linkedin.com/in/clemlble','_blank')">
+              <i class="fa-brands fa-linkedin-in fa-xl" style="color:#0077b5"></i>
+            </button>
+            <button class="social-icon-bg" aria-label="Discord" onclick="window.open('https://discord.com/users/clemlble','_blank')">
+              <i class="fa-brands fa-discord fa-xl" style="color:#5865F2"></i>
+            </button>
+            <button class="social-icon-bg" aria-label="Instagram" onclick="window.open('https://instagram.com/clement.lble','_blank')">
+              <i class="fa-brands fa-instagram fa-xl" style="color:#E4405F"></i>
+            </button>
+            <button class="social-icon-bg" aria-label="Pinterest" onclick="window.open('https://pinterest.com/clemlble','_blank')">
+              <i class="fa-brands fa-pinterest-p fa-xl" style="color:#E60023"></i>
+            </button>
+            <button class="social-icon-bg" aria-label="Github" onclick="window.open('https://github.com/clemlble','_blank')">
+              <i class="fa-brands fa-github fa-xl" style="color:#232323"></i>
+            </button>
+          </div>
+        </div>
+        <button id="carousel-right" class="slider-arrow text-[#a68df5] text-xl" aria-label="Suivant"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      <!-- Links -->
+      <div class="flex flex-col gap-3 px-5 mt-4 pb-8">
+        <a href="https://centriconcept.com" target="_blank" class="input-link flex items-center justify-between px-5 py-3 font-medium shadow rounded-xl border border-[#edeaff] hover:shadow-md transition">
+          Site Centric.concept
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://meet.google.com/landing?pli=1" target="_blank" class="input-link flex items-center justify-between px-5 py-3 font-medium shadow rounded-xl border border-[#edeaff] hover:shadow-md transition">
+          Prendre Rendez-vous
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <a href="https://cal.com/clemlble" target="_blank" class="input-link flex items-center justify-between px-5 py-3 font-medium shadow rounded-xl border border-[#edeaff] hover:shadow-md transition">
+          Portfolio
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+      <!-- Footer -->
+      <footer class="footer">
+        Carte de visite Lenoble Clément © 2025
+      </footer>
+    </div>
+    <!-- Overlay (hidden by default, bottom sheet style) -->
+    <div id="fiche-contact-overlay" class="overlay-bg" style="display:none;">
+      <div class="overlay-bottomsheet">
+        <div class="overlay-dragbar"></div>
+        <button type="button" class="overlay-close" aria-label="Fermer" onclick="closeOverlay()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+        <!-- Nouveau : formulaire rapide -->
+        <form id="quickContactForm" class="quick-contact-form" autocomplete="off">
+          <div>
+            <label for="formName">Nom</label>
+            <input id="formName" name="name" type="text" required placeholder="Votre nom"/>
+          </div>
+          <div>
+            <label for="formEmail">Email</label>
+            <input id="formEmail" name="email" type="email" required placeholder="Votre email"/>
+          </div>
+          <!-- Champ message supprimé -->
+          <button type="submit"><i class="fa-solid fa-paper-plane"></i> Demander l'accès à la fiche contact</button>
+          <div id="formMessage"></div>
+        </form>
+        <!-- / Nouveau -->
+        <div id="contact-infos" style="display:none;">
+          <div class="overlay-info-list" style="margin-bottom:2.1rem;">
+            <div class="overlay-info-row">
+              <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+              <a href="mailto:clement.lenoble74@gmail.com">clement.lenoble74@gmail.com</a>
+            </div>
+            <div class="overlay-info-row">
+              <span class="icon"><i class="fa-solid fa-phone"></i></span>
+              <a href="tel:+33695208374">+33 6 95 20 83 74</a>
+            </div>
+          </div>
+          <div class="overlay-actions">
+            <button class="overlay-action-btn" onclick="window.location.href='mailto:clement.lenoble74@gmail.com'">
+              <i class="fa-solid fa-paper-plane"></i> Envoyer un mail
+            </button>
+            <button class="overlay-action-btn" onclick="window.open('tel:+33695208374')">
+              <i class="fa-solid fa-phone"></i> Appeler
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Overlay logic
+      document.getElementById('fiche-contact-btn').onclick = function() {
+        document.getElementById('fiche-contact-overlay').style.display = "flex";
+        document.body.style.overflow = "hidden";
+      };
+      function closeOverlay() {
+        const overlay = document.getElementById('fiche-contact-overlay');
+        const bottomSheet = overlay.querySelector('.overlay-bottomsheet');
+        // Ajoute l'animation de sortie
+        bottomSheet.style.animation = "bottomSheetOut .27s cubic-bezier(.4,0,.2,1)";
+        overlay.style.background = "rgba(40, 40, 60, 0.0)"; // fade out le fond
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          document.body.style.overflow = "";
+          // Réinitialise l'animation pour la prochaine ouverture
+          bottomSheet.style.animation = "bottomSheetIn .27s cubic-bezier(.4,0,.2,1)";
+          overlay.style.background = "rgba(40, 40, 60, 0.38)";
+        }, 270);
+      }
+      document.querySelector('.overlay-close').onclick = closeOverlay;
+      window.addEventListener('keydown', function(e) {
+        if(document.getElementById('fiche-contact-overlay').style.display === 'flex' && e.key === 'Escape') {
+          closeOverlay();
+        }
+      });
+      document.getElementById('fiche-contact-overlay').addEventListener('mousedown', function(e) {
+        if (e.target === this) closeOverlay();
+      });
+
+      // Formulaire rapide (simulation JS, pas d'envoi email réel, affichage message)
+      document.getElementById('quickContactForm').onsubmit = function(e) {
+        e.preventDefault();
+        var name = document.getElementById('formName').value.trim();
+        var email = document.getElementById('formEmail').value.trim();
+        var messageDiv = document.getElementById('formMessage');
+        // Validation simple
+        if(!name || !email) {
+          messageDiv.innerHTML = '<div class="form-error">Merci de remplir tous les champs.</div>';
+          return false;
+        }
+        // Simule l'envoi
+        messageDiv.innerHTML = '<div class="form-success">Merci ! Votre demande a bien été envoyée.<br>Vous recevrez une réponse prochainement.</div>';
+        document.getElementById('quickContactForm').reset();
+        setTimeout(() => { messageDiv.innerHTML = ""; }, 1200);
+
+        // Affiche les infos de contact et masque le formulaire
+        setTimeout(() => {
+          document.getElementById('quickContactForm').style.display = "none";
+          document.getElementById('contact-infos').style.display = "block";
+        }, 1200);
+
+        return false;
+      };
+
+      // Socials carousel logic: boucle infinie vers la droite
+      const track = document.getElementById('social-carousel-track');
+      const btnRight = document.getElementById('carousel-right');
+      let visibleIcons = 5;
+      let position = 0;
+      let autoScroll;
+
+      // Duplique les premiers éléments pour effet de boucle fluide
+      function cloneForLoop() {
+        // Supprime les clones précédents s'il y en a
+        const clones = track.querySelectorAll('.carousel-clone');
+        clones.forEach(clone => clone.remove());
+        // Clone les premiers éléments pour la boucle
+        for (let i = 0; i < visibleIcons; i++) {
+          const clone = track.children[i].cloneNode(true);
+          clone.classList.add('carousel-clone');
+          track.appendChild(clone);
+        }
+      }
+
+      function updateCarousel() {
+        const iconWidth = 52 + 18; // 52px + 18px de margin-right
+        track.style.transition = 'transform 0.5s cubic-bezier(.4,0,.2,1)';
+        track.style.transform = `translateX(${-position * iconWidth}px)`;
+      }
+
+      function moveNext() {
+        const iconCount = track.children.length;
+        position++;
+        updateCarousel();
+        // Si on atteint la fin (après les clones), on revient instantanément au début
+        if (position === iconCount - visibleIcons) {
+          setTimeout(() => {
+            track.style.transition = 'none';
+            position = 0;
+            track.style.transform = `translateX(0px)`;
+          }, 510);
+        }
+      }
+
+      btnRight.onclick = () => {
+        moveNext();
+        resetAutoScroll();
+      };
+
+      function startAutoScroll() {
+        autoScroll = setInterval(moveNext, 2100);
+      }
+      function resetAutoScroll() {
+        clearInterval(autoScroll);
+        startAutoScroll();
+      }
+
+      function adjustCarouselWidth() {
+        visibleIcons = window.innerWidth <= 420 ? 4 : 5;
+        let width = visibleIcons * (52 + 18) - 18;
+        if(window.innerWidth <= 420) width = visibleIcons * (52 + 18) - 18 - 60;
+        document.querySelector('.social-carousel').style.width = width+'px';
+        cloneForLoop();
+        position = 0;
+        updateCarousel();
+      }
+      window.addEventListener('resize', adjustCarouselWidth);
+
+      // Initialisation
+      adjustCarouselWidth();
+      updateCarousel();
+      startAutoScroll();
+
+      // AirDrop Button functionality (partage natif si possible)
+      document.getElementById('airdrop-btn').onclick = function() {
+        const shareUrl = window.location.href; // Utilise l'URL de la page en ligne
+        if (navigator.share) {
+          navigator.share({
+            title: "Carte de visite Lenoble Clément",
+            text: "Découvre la carte de visite de Clément Lenoble !",
+            url: shareUrl
+          }).catch(() => {});
+        } else {
+          alert(
+            "Le partage natif n'est pas supporté sur ce navigateur.\n\n" +
+            "Pour partager cette page via AirDrop :\n" +
+            "1. Ouvre le menu de partage de ton navigateur (icône de partage).\n" +
+            "2. Choisis AirDrop et sélectionne le destinataire.\n\n" +
+            "Lien à partager : " + shareUrl
+          );
+        }
+      };
+    </script>
+  </body>
+</html>
